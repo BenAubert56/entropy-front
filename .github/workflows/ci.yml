@@ -8,13 +8,13 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    env:
+      CYPRESS_INSTALL_BINARY: 0  # Evite d'installer Cypress (non utilisé ici)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
-      - run: corepack enable
-      - run: corepack prepare pnpm@latest --activate
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
