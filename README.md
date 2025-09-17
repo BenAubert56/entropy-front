@@ -1,66 +1,107 @@
-<<<<<<< HEAD
-# entropy-front
-Vue Frontend for Entropy Management
-=======
-# mon-app
+# Analyse de l’entropie et de la redondance des mots de passe
 
-This template should help get you started developing with Vue 3 in Vite.
+Ce document explique le fonctionnement du composant Vue fourni, qui évalue la **force** et la **redondance** d’un mot de passe.
 
-## Recommended IDE Setup
+---
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 1. Entropie globale
 
-## Type Support for `.vue` Imports in TS
+### Définition
+L’entropie d’un mot de passe mesure sa quantité d’information, en bits.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- On estime d’abord la taille de l’alphabet possible (`N`).
+- Chaque caractère apporte alors `log2(N)` bits.
+- L’entropie totale ≈ `longueur × log2(N)`.
 
-## Customize configuration
+### Exemple
+- Mot de passe `apd45!D`
+- Alphabet détecté : minuscules (26) + majuscules (26) + chiffres (10) + symboles (33) = 95
+- `log2(95) ≈ 6,57 bits`
+- Longueur = 7
+- Entropie ≈ 46 bits
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+Un seuil de 60 bits est souvent choisi comme minimum.
 
-## Project Setup
+---
 
-```sh
-pnpm install
+## 2. Redondance
+
+### Idée
+La redondance reflète **les répétitions et régularités** dans un mot de passe.  
+Formule de base (Shannon) :
+
+```
+R = 1 - (H_eff / log2(k))
 ```
 
-### Compile and Hot-Reload for Development
+- `k` = nombre de symboles distincts
+- `H_eff` = entropie effective par caractère
+- `R` = 0 % (aucune redondance) → 100 % (très redondant)
 
-```sh
-pnpm dev
+---
+
+## 3. Trois composantes
+
+Pour obtenir une redondance logique, on combine trois indicateurs :
+
+### R1 – Manque de diversité
+- Calcule l’entropie empirique `H_emp` à partir des fréquences des caractères.
+- Si un caractère est surreprésenté (`aaaaaaaa`), `H_emp` chute.
+- `R1 = 1 - H_emp/log2(k)`
+
+### R2 – Dépendances séquentielles
+- Analyse les transitions entre caractères (Markov ordre 1).
+- Si chaque caractère annonce presque toujours le suivant (ex: `abababab`), l’entropie conditionnelle baisse.
+- `R2 = 1 - H_rate/log2(k)`
+
+### R3 – Répétition de blocs
+- Détecte explicitement les sous-chaînes répétées contiguës.
+- Exemple `bonbon` = `bon`×2 → couverture = 100 %.
+- Exemple `aaaaaaaa7!` → 6 `a` sur 8 caractères = 75 %.
+- `R3 = taille_bloc_repeté / longueur`
+
+---
+
+## 4. Score final
+
+Le score de redondance est calculé comme suit :
+
+```
+Redondance = max(R3, 0.3·R1, 0.2·R2)
 ```
 
-### Type-Check, Compile and Minify for Production
+- R3 est prioritaire (répétitions franches).
+- R1 et R2 sont pondérés pour rester en appoint.
 
-```sh
-pnpm build
-```
+---
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+## 5. Exemples
 
-```sh
-pnpm test:unit
-```
+| Mot de passe     | Résultat attendu |
+|------------------|------------------|
+| `aaaaaaaaaa`     | 100 % redondance |
+| `bonbon`         | 100 % redondance |
+| `aaaaaaaa7!`     | ≈ 75 %           |
+| `kZfvns72fj!`    | ≈ 0 %            |
+| `kylianlebg`     | Faible redondance |
 
-### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
+---
 
-```sh
-pnpm test:e2e:dev
-```
+## 6. Utilisation pratique
 
-This runs the end-to-end tests against the Vite development server.
-It is much faster than the production build.
+Dans l’UI :
+- La **ProgressBar** montre la redondance en %.
+- Vert = acceptable (≤ 20 %).
+- Rouge = trop de redondance.
 
-But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
+---
 
-```sh
-pnpm build
-pnpm test:e2e
-```
+## 7. Conclusion
 
-### Lint with [ESLint](https://eslint.org/)
+Ce système combine :
+- Entropie globale pour la **force brute**.
+- Redondance pour la **variété réelle**.
 
-```sh
-pnpm lint
-```
->>>>>>> 9c33959 (init vue project)
+Un bon mot de passe doit avoir :
+- Entropie ≥ 60 bits
+- Redondance ≤ 20 %
