@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import Password from 'primevue/password'
+import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import ProgressBar from 'primevue/progressbar'
+
+const router = useRouter()
 
 const name = ref('')
 const password = ref('')
@@ -187,6 +190,7 @@ async function onSubmit() {
       }
       // Optionally clear password
       password.value = ''
+      router.push('/login')
     } else {
       // Backend may send: { error: string } or validation object
       const errorMsg: string = data?.error || 'Inscription refusée par le serveur.'
