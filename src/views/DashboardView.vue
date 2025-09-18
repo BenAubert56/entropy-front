@@ -54,6 +54,7 @@ async function fetchUsers() {
     }
   } catch (err) {
     errorMsg.value = 'Impossible de contacter le serveur'
+    console.error('Erreur pour contacter le serveur:', err)
   } finally {
     loading.value = false
   }
