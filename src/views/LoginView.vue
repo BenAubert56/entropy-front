@@ -21,7 +21,12 @@ async function onLogin() {
   successMsg.value = ''
 
   try {
-    const res = await fetch('login', {
+    const isDev = import.meta.env.DEV
+    const base = import.meta.env.VITE_API_BASE_URL || ''
+    const url = isDev
+        ? '/api/login'
+        : (base.endsWith('/') ? base : base + '/') + 'login'
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: username.value, password: password.value })
