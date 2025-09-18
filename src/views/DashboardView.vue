@@ -40,7 +40,7 @@ async function fetchUsers() {
   }
 
   try {
-    const res = await fetch('/api/dashboard', {
+    const res = await fetch('/dashboard', {
       method: 'GET',
       headers: { 'Authorization': `Bearer ${token}` },
       credentials: 'include'
@@ -63,7 +63,7 @@ async function fetchUsers() {
 /* ----------- Déconnexion ----------- */
 async function onLogout() {
   try {
-    await fetch('/api/logout', {
+    await fetch('/logout', {
       method: 'POST',
       credentials: 'include'
     })
@@ -77,7 +77,7 @@ async function onLogout() {
 /* ----------- Changer rôle ----------- */
 async function changeRole(username: string, newRole: string) {
   try {
-    const res = await fetch('/api/update-role', {
+    const res = await fetch('/update-role', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
