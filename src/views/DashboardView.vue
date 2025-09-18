@@ -40,7 +40,12 @@ async function fetchUsers() {
   }
 
   try {
-    const res = await fetch('/dashboard', {
+    const isDev = import.meta.env.DEV
+    const base = import.meta.env.VITE_API_BASE_URL || ''
+    const url = isDev
+        ? '/api/dashboard'
+        : (base.endsWith('/') ? base : base + '/') + 'dashboard'
+    const res = await fetch(url, {
       method: 'GET',
       headers: { 'Authorization': `Bearer ${token}` },
       credentials: 'include'
@@ -63,7 +68,12 @@ async function fetchUsers() {
 /* ----------- Déconnexion ----------- */
 async function onLogout() {
   try {
-    await fetch('/logout', {
+    const isDev = import.meta.env.DEV
+    const base = import.meta.env.VITE_API_BASE_URL || ''
+    const url = isDev
+        ? '/api/logout'
+        : (base.endsWith('/') ? base : base + '/') + 'logout'
+    await fetch(url, {
       method: 'POST',
       credentials: 'include'
     })
@@ -77,7 +87,12 @@ async function onLogout() {
 /* ----------- Changer rôle ----------- */
 async function changeRole(username: string, newRole: string) {
   try {
-    const res = await fetch('/update-role', {
+    const isDev = import.meta.env.DEV
+    const base = import.meta.env.VITE_API_BASE_URL || ''
+    const url = isDev
+        ? '/api/update-role'
+        : (base.endsWith('/') ? base : base + '/') + 'update-role'
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
