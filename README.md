@@ -70,6 +70,7 @@ Le score de redondance est calculé comme suit :
 Redondance = max(R3, 0.3·R1, 0.2·R2)
 ```
 
+
 - R3 est prioritaire (répétitions franches).
 - R1 et R2 sont pondérés pour rester en appoint.
 
@@ -77,12 +78,12 @@ Redondance = max(R3, 0.3·R1, 0.2·R2)
 
 ## 5. Exemples
 
-| Mot de passe     | Résultat attendu |
-|------------------|------------------|
-| `aaaaaaaaaa`     | 100 % redondance |
-| `bonbon`         | 100 % redondance |
-| `aaaaaaaa7!`     | ≈ 75 %           |
-| `kZfvns72fj!`    | ≈ 0 %            |
+| Mot de passe     | Résultat attendu  |
+|------------------|-------------------|
+| `aaaaaaaaaa`     | 100 % redondance  |
+| `bonbon`         | 100 % redondance  |
+| `aaaaaaaa7!`     | ≈ 75 %            |
+| `kZfvns72fj!`    | ≈ 0 %             |
 | `kylianlebg`     | Faible redondance |
 
 ---
@@ -96,7 +97,25 @@ Dans l’UI :
 
 ---
 
-## 7. Conclusion
+## 7. Compte administrateur par défaut
+
+Un compte **admin** est disponible par défaut pour accéder au tableau de bord :
+
+- **Nom d’utilisateur** : `admin`  
+- **Mot de passe** : `Admin#123456`  
+
+⚠️ Pensez à modifier ce mot de passe dans un environnement réel pour des raisons de sécurité.
+
+---
+
+## 8. Expiration de la base de données
+
+La base de données utilisée dans ce projet est temporaire.  
+Elle **expire automatiquement le 17 octobre**.  
+
+---
+
+## 9. Conclusion
 
 Ce système combine :
 - Entropie globale pour la **force brute**.
